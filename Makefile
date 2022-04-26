@@ -8,7 +8,7 @@ PARAMS = -W -Wall -Wextra -Wsign-compare \
 					 -funroll-loops \
 					 -ftree-vectorize \
 					 -fomit-frame-pointer \
-					 main.cpp mt32.cpp mt64.cpp \
+					 main.cpp mt32.cpp mt64.cpp test_fourier.cpp \
 					 -o
 SEED = 291 564 837 1110
 

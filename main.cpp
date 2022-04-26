@@ -3,6 +3,7 @@
 //
 #include "mt64.h"
 #include "mt32.h"
+#include "test_fourier.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,9 +48,13 @@ int main(int argc, char *argv[]) {
         if (i % 5 == 4) printf("\n");
     }
     printf("\n1000  double\n");
+    double *out = new double[1000] ;
     for (i = 0; i < 1000; i++) {
-        printf("%10.8lf ", genrand64_real1(mt64));
+        double tmp = genrand64_real1(mt64);
+        out[i] = tmp;
+        printf("%10.8lf ",tmp);
         if (i % 5 == 4) printf("\n");
     }
+    fft(out,1000);
     return 0;
 }
