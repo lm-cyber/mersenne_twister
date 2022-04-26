@@ -1,7 +1,5 @@
 
 
-#include <stdio.h>
-#include <stdlib.h>
 
 /* Параметры периода */
 #define N 624
@@ -127,26 +125,4 @@ extern "C" double genrand_res53(void)
 }
 
 
-int main(int argc, char *argv[]) {
-    if (argc < 5) {
-        return 1;
-    }
-    int i;
-    unsigned long init[4] , length = 4;
-    init[0] = strtoul(argv[1],NULL,10);
-    init[1] = strtoul(argv[2],NULL,10);
-    init[2] = strtoul(argv[3],NULL,10);
-    init[3] = strtoul(argv[4],NULL,10);
-    init_by_array(init, length);
-    printf("1000 genrand_int32()\n");
-    for (i = 0; i < 1000; i++) {
-        printf("%10lu ", genrand_int32());
-        if (i % 5 == 4) printf("\n");
-    }
-    printf("\n1000  genrand_real2()\n");
-    for (i = 0; i < 1000; i++) {
-        printf("%10.8f ", genrand_real2());
-        if (i % 5 == 4) printf("\n");
-    }
-    return 0;
-}
+

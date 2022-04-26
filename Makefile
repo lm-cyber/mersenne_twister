@@ -8,7 +8,7 @@ PARAMS = -W -Wall -Wextra -Wsign-compare \
 					 -funroll-loops \
 					 -ftree-vectorize \
 					 -fomit-frame-pointer \
-					 mersenne_twister.cpp \
+					 main.cpp mt32.cpp mt64.cpp \
 					 -o
 SEED = 291 564 837 1110
 
@@ -22,3 +22,4 @@ run :
 
 clean:
 	rm -f $(TARGETS)
+	clear
