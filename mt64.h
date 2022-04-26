@@ -7,7 +7,7 @@
 #include <stdio.h>
 #define NN 312
 #define MM 156
-#define MATRIX_A 0xB5026F5AA96619E9ULL
+#define MATRIX_A64 0xB5026F5AA96619E9ULL
 #define UM 0xFFFFFFFF80000000ULL /* Старшие значащие 33 бита */
 #define LM 0x7FFFFFFFULL /* Младший значащий 31 биты */
 

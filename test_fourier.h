@@ -1,0 +1,11 @@
+//
+// Created by void on 26.04.22.
+//
+
+#ifndef MERSENNE_TWISTER_TEST_FOURIER_H
+#define MERSENNE_TWISTER_TEST_FOURIER_H
+
+
+
+
+#endif //MERSENNE_TWISTER_TEST_FOURIER_H

@@ -2,84 +2,80 @@
 
 
 /* Параметры периода */
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908b0dfUL   /* постоянный вектор а */
-#define UPPER_MASK 0x80000000UL /* старшие значащие биты w-r */
-#define LOWER_MASK 0x7fffffffUL /* наименее значащие r биты */
 
-static unsigned long mt[N]; /* массив для вектора состояния  */
-static int mti=N+1; /* mti==N+1 означает, что mt[N] не инициализирован */
+#include "mt32.h"
+//static unsigned long mt[N]; /* массив для вектора состояния  */
+//static int mti=N+1; /* mti==N+1 означает, что mt[N] не инициализирован */
 
 /* инициализирует mt[N] начальным числом */
-extern "C" void init_genrand(unsigned long s)
+void init_genrand(unsigned long seed, mt19937_32 *mt32 )
 {
-    mt[0]= s & 0xffffffffUL;
-    for (mti=1; mti<N; mti++) {
-        mt[mti] =
-                (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
+    mt32->mt[0]= seed & 0xffffffffUL;
+    for (mt32->mti=1; mt32->mti<N; mt32->mti++) {
+        mt32->mt[mt32->mti] =
+                (1812433253UL * (mt32->mt[mt32->mti-1] ^ (mt32->mt[mt32->mti-1] >> 30)) + mt32->mti);
         /* В предыдущих версиях MSB начального числа влияют   */
         /* только старшие разряды массива mt[].                        */
-        mt[mti] &= 0xffffffffUL;
+        mt32->mt[mt32->mti] &= 0xffffffffUL;
         /* для > 32-битных машин */
     }
 }
 
 /* инициализировать массивом с длиной массива */
 /* init_key — массив для инициализации ключей */
-extern "C" void init_by_array(unsigned long init_key[], int key_length)
+void init_by_array(unsigned long init_key[], int key_length,mt19937_32 *mt32)
 {
     int i, j, k;
-    init_genrand(19650218UL);
+    init_genrand(19650218UL,mt32);
     i=1; j=0;
     k = (N>key_length ? N : key_length);
     for (; k; k--) {
-        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1664525UL))
+        mt32->mt[i] = (mt32->mt[i] ^ ((mt32->mt[i-1] ^ (mt32->mt[i-1] >> 30)) * 1664525UL))
                 + init_key[j] + j;
-        mt[i] &= 0xffffffffUL; /* для WORDSIZE > 32 машин */
+        mt32->mt[i] &= 0xffffffffUL; /* для WORDSIZE > 32 машин */
         i++; j++;
-        if (i>=N) { mt[0] = mt[N-1]; i=1; }
+        if (i>=N) { mt32->mt[0] = mt32->mt[N-1]; i=1; }
         if (j>=key_length) j=0;
     }
     for (k=N-1; k; k--) {
-        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1566083941UL))
+        mt32->mt[i] = (mt32->mt[i] ^ ((mt32->mt[i-1] ^ (mt32->mt[i-1] >> 30)) * 1566083941UL))
                 - i;
-        mt[i] &= 0xffffffffUL; /* для WORDSIZE > 32 машин */
+        mt32->mt[i] &= 0xffffffffUL; /* для WORDSIZE > 32 машин */
         i++;
-        if (i>=N) { mt[0] = mt[N-1]; i=1; }
+        if (i>=N) { mt32->mt[0] = mt32->mt[N-1]; i=1; }
     }
 
-    mt[0] = 0x80000000UL; /* старший бит равен 1; обеспечение ненулевого исходного массива*/
+    mt32->mt[0] = 0x80000000UL; /* старший бит равен 1; обеспечение ненулевого исходного массива*/
 }
 
 /* генерирует случайное число на интервале [0,0xffffffff] */
-extern "C" unsigned long genrand_int32(void)
+unsigned long genrand_int32(mt19937_32 *mt32)
 {
     unsigned long y;
     static unsigned long mag01[2]={0x0UL, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (mti >= N) { /* генерировать N слов за один раз */
+    if (mt32->mti >= N) { /* генерировать N слов за один раз */
         int kk;
 
-        if (mti == N+1)   /* если init_genrand() не был вызван, */
-            init_genrand(5489UL); /* используется начальное семя по умолчанию */
+        if (mt32->mti == N+1)   /* если init_genrand() не был вызван, */
+            init_genrand(5489UL,mt32); /* используется начальное семя по умолчанию */
 
         for (kk=0;kk<N-M;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
+            y = (mt32->mt[kk]&UPPER_MASK)|(mt32->mt[kk+1]&LOWER_MASK);
+            mt32->mt[kk] = mt32->mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
         }
         for (;kk<N-1;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
+            y = (mt32->mt[kk]&UPPER_MASK)|(mt32->mt[kk+1]&LOWER_MASK);
+            mt32->mt[kk] = mt32->mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
         }
-        y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-        mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+        y = (mt32->mt[N-1]&UPPER_MASK)|(mt32->mt[0]&LOWER_MASK);
+        mt32->mt[N-1] = mt32->mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
 
-        mti = 0;
+        mt32->mti = 0;
     }
 
-    y = mt[mti++];
+    y = mt32->mt[mt32->mti++];
 
     /* Tempering */
     y ^= (y >> 11);
@@ -91,36 +87,36 @@ extern "C" unsigned long genrand_int32(void)
 }
 
 /* генерирует случайное число на интервале [0,0x7ffffffff] */
-extern "C" long genrand_int31(void)
+long genrand_int31(mt19937_32 *mt32)
 {
-    return (long)(genrand_int32()>>1);
+    return (long)(genrand_int32(mt32)>>1);
 }
 
 /* генерирует случайное число на [0,1]-реальном интервале */
-extern "C" double genrand_real1(void)
+double genrand_real1(mt19937_32 *mt32)
 {
-    return genrand_int32()*(1.0/4294967295.0);
+    return genrand_int32(mt32)*(1.0/4294967295.0);
     /*2^32-1 */
 }
 
 /* генерирует случайное число на [0,1)-реальном интервале */
-extern "C" double genrand_real2(void)
+double genrand_real2(mt19937_32 *mt32)
 {
-    return genrand_int32()*(1.0/4294967296.0);
+    return genrand_int32(mt32)*(1.0/4294967296.0);
     /*  2^32 */
 }
 
 /* генерирует случайное число на (0,1)-реальном интервале */
-extern "C" double genrand_real3(void)
+double genrand_real3(mt19937_32 *mt32)
 {
-    return (((double)genrand_int32()) + 0.5)*(1.0/4294967296.0);
+    return (((double)genrand_int32(mt32)) + 0.5)*(1.0/4294967296.0);
     /*  2^32 */
 }
 
 /* генерирует случайное число на [0,1) с 53-битным разрешением*/
-extern "C" double genrand_res53(void)
+double genrand_res53(mt19937_32 *mt32)
 {
-    unsigned long a=genrand_int32()>>5, b=genrand_int32()>>6;
+    unsigned long a=genrand_int32(mt32)>>5, b=genrand_int32(mt32)>>6;
     return(a*67108864.0+b)*(1.0/9007199254740992.0);
 }
 

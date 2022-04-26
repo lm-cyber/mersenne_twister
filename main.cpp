@@ -15,6 +15,8 @@ int main(int argc, char *argv[]) {
     int i;
     unsigned long init[4] , length = 4;
     unsigned long long init64[4];
+    mt19937_32 *mt32 = new mt19937_32;
+
     init64[0] = strtoll(argv[1],NULL,10);
     init64[0] = strtoll(argv[2],NULL,10);
     init64[0] = strtoll(argv[3],NULL,10);
@@ -24,15 +26,15 @@ int main(int argc, char *argv[]) {
     init[1] = strtoul(argv[2],NULL,10);
     init[2] = strtoul(argv[3],NULL,10);
     init[3] = strtoul(argv[4],NULL,10);
-    init_by_array(init, length);
+    init_by_array(init, length,mt32);
     printf("1000 genrand_int32()\n");
     for (i = 0; i < 1000; i++) {
-        printf("%lu ", genrand_int32());
+        printf("%lu ", genrand_int32(mt32));
         if (i % 5 == 4) printf("\n");
     }
     printf("\n1000  genrand_real2()\n");
     for (i = 0; i < 1000; i++) {
-        printf("%10.8f ", genrand_real2());
+        printf("%10.8f ", genrand_real2(mt32));
         if (i % 5 == 4) printf("\n");
     }
     mt19937_64 *mt64 = new mt19937_64;

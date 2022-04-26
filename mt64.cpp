@@ -43,7 +43,7 @@ unsigned long long genrand64_int64(struct mt19937_64* context)
 
 		int i;
 		unsigned long long x;
-		static unsigned long long mag01[2]={0ULL, MATRIX_A};
+		static unsigned long long mag01[2]={0ULL, MATRIX_A64};
 
 		if (mti >= NN) { /* generate NN words at one time */
 
@@ -89,14 +89,14 @@ unsigned long long genrand64_int64(struct mt19937_64* context)
 
         for (i = 0, j = mid; i != mid - 1; i++, j++) {
             x = (context->mt[i] & UM) | (context->mt[i + 1] & LM);
-            context->mt[i] = context->mt[i + mid] ^ (x >> 1) ^ ((context->mt[i + 1] & 1) * MATRIX_A);
+            context->mt[i] = context->mt[i + mid] ^ (x >> 1) ^ ((context->mt[i + 1] & 1) * MATRIX_A64);
             y = (context->mt[j] & UM) | (context->mt[j + 1] & LM);
-            context->mt[j] = context->mt[j - mid] ^ (y >> 1) ^ ((context->mt[j + 1] & 1) * MATRIX_A);
+            context->mt[j] = context->mt[j - mid] ^ (y >> 1) ^ ((context->mt[j + 1] & 1) * MATRIX_A64);
         }
         x = (context->mt[mid - 1] & UM) | (stateMid & LM);
-        context->mt[mid - 1] = context->mt[NN - 1] ^ (x >> 1) ^ ((stateMid & 1) * MATRIX_A);
+        context->mt[mid - 1] = context->mt[NN - 1] ^ (x >> 1) ^ ((stateMid & 1) * MATRIX_A64);
         y = (context->mt[NN - 1] & UM) | (context->mt[0] & LM);
-        context->mt[NN - 1] = context->mt[mid - 1] ^ (y >> 1) ^ ((context->mt[0] & 1) * MATRIX_A);
+        context->mt[NN - 1] = context->mt[mid - 1] ^ (y >> 1) ^ ((context->mt[0] & 1) * MATRIX_A64);
 
         context->mti = 0;
     }
